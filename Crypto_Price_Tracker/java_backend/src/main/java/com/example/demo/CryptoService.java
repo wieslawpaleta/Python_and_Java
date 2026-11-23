@@ -18,11 +18,27 @@ public class CryptoService {  // Declarar la clase pública CryptoService encarg
             String line;  // Declarar una variable de texto temporal para almacenar cada línea del archivo mientras se lee (Zadeklaruj tymczasową zmienną tekstową do przechowywania każdej linii pliku podczas odczytu)
             
             while ((line = br.readLine()) != null) {  // Iniciar un bucle que lee una línea nueva en cada vuelta mientras no llegue al final del archivo (null) (Rozpocznij pętlę, która czyta nową linię w każdym obrocie, dopóki nie dotrze do końca pliku - null)
-                if ((line = br.readLine()) != null) { //
+                if (line.trim().isEmpty()) {  // Comprobar si la línea está completamente vacía o solo tiene espacios en blanco (Sprawdź, czy linia jest całkowicie pusta lub zawiera tylko białe znaki)
+                    continue;  // Saltar esta vuelta del bucle y pasar directamente a la siguiente línea del archivo (Pomiń ten obrót pętli i przejdź bezpośrednio do następnej linii pliku)
+                }  // Cerrar el bloque condicional if (Zamknij blok warunkowy if)
 
-                }
-            }
-        }
-    }
-    
-}
+                String[] parts = line.split(",");  // Dividir la línea de texto usando la coma como separador y guardar los trozos en un arreglo de textos (Podziel linię tekstu używając przecinka jako separatora i zapisz kawałki w tablicy tekstów)
+                
+                if (parts.length == 3) {  // Verificar que la línea tenga exactamente 3 columnas: fecha, símbolo y precio (Sprawdź, czy linia ma dokładnie 3 kolumny: datę, symbol i cenę)
+                    String timestamp = parts[0].trim();  // Extraer el primer elemento (posición 0), quitar espacios sobrantes y guardarlo como timestamp (Wyciągnij pierwszy element - pozycja 0, usuń zbędne spacje i zapisz jako timestamp)
+                    String symbol = parts[1].trim();  // Extraer el segundo elemento (posición 1), quitar espacios sobrantes y guardarlo como symbol (Wyciągnij drugi element - pozycja 1, usuń zbędne spacje i zapisz jako symbol)
+                    double price = Double.parseDouble(parts[2].trim());  // Extraer el tercer elemento (posición 2) y convertirlo de texto a número decimal double (Wyciągnij trzeci element - pozycja 2 i skonwertuj go z tekstu na liczbę dziesiętną double)
+
+                    CryptoPrice cryptoPrice = new CryptoPrice(timestamp, symbol, price);  // Crear un nuevo objeto CryptoPrice usando el constructor con los 3 datos extraídos (Utwórz nowy obiekt CryptoPrice używając konstruktora z 3 wyciągniętymi danymi)
+                    priceList.add(cryptoPrice);  // Añadir el objeto recién creado a nuestra lista general priceList (Dodaj nowo utworzony obiekt do naszej ogólnej listy priceList)
+                }  // Cerrar el bloque de verificación de longitud (Zamknij blok weryfikacji długości)
+            }  // Cerrar el bucle while cuando ya no queden más líneas por leer (Zamknij pętlę while, gdy nie ma już więcej linii do przeczytania)
+            
+        } catch (IOException e) {  // Capturar cualquier error de entrada/salida, por ejemplo si no se encuentra el archivo CSV (Przechwyć dowolny błąd wejścia/wyjścia, na przykład jeśli plik CSV nie zostanie znaleziony)
+            System.err.println("Error al leer el archivo CSV: " + e.getMessage());  // Imprimir el mensaje de error en la consola de errores del sistema (Wypisz komunikat o błędzie w konsoli błędów systemu)
+        }  // Cerrar el bloque catch (Zamknij blok catch)
+
+        return priceList;  // Devolver la lista completa con todos los objetos CryptoPrice leídos del archivo (Zwróć kompletną listę ze wszystkimi obiektami CryptoPrice odczytanymi z pliku)
+    }  // Cerrar el cuerpo del método getAllPricesFromCsv (Zamknij ciało metody getAllPricesFromCsv)
+
+}  // Cerrar el cuerpo de la clase CryptoService (Zamknij ciało klasy CryptoService)
