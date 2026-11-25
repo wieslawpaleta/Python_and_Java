@@ -6,6 +6,7 @@ import java.io.FileReader;  // Importar FileReader para abrir y leer el contenid
 import java.io.IOException;  // Importar IOException para capturar errores si el archivo no existe o no se puede leer (Importuj IOException, aby przechwycić błędy, jeśli plik nie istnieje lub nie można go odczytać)
 import java.util.ArrayList;  // Importar ArrayList para crear una lista dinámica donde guardaremos los precios (Importuj ArrayList, aby utworzyć dynamiczną listę, w której zapiszemy ceny)
 import java.util.List;  // Importar la interfaz List para definir el tipo de colección que devolverá el método (Importuj interfejs List, aby zdefiniować typ kolekcji zwracanej przez metodę)
+import java.util.DoubleSummaryStatistics;  // Importar DoubleSummaryStatistics para calcular mínimo, máximo, promedio y conteo automáticamente (Importuj DoubleSummaryStatistics, aby automatycznie obliczać minimum, maksimum, średnią i liczbę elementów)
 
 @Service  // Marcar esta clase como un servicio gestionado automáticamente por Spring Boot (Oznacz tę klasę jako serwis zarządzany automatycznie przez Spring Boot)
 public class CryptoService {  // Declarar la clase pública CryptoService encargada de procesar los datos (Zadeklaruj publiczną klasę CryptoService odpowiedzialną za przetwarzanie danych)
@@ -41,4 +42,22 @@ public class CryptoService {  // Declarar la clase pública CryptoService encarg
         return priceList;  // Devolver la lista completa con todos los objetos CryptoPrice leídos del archivo (Zwróć kompletną listę ze wszystkimi obiektami CryptoPrice odczytanymi z pliku)
     }  // Cerrar el cuerpo del método getAllPricesFromCsv (Zamknij ciało metody getAllPricesFromCsv)
 
+        public CryptoStats getStatsBySymbol(String symbol) {  // Definir un método público que recibe un símbolo y devuelve un objeto CryptoStats con los cálculos (Zdefiniuj publiczną metodę, która przyjmuje symbol i zwraca obiekt CryptoStats z obliczeniami)
+        List<CryptoPrice> filteredPrices = getPricesBySymbol(symbol);  // Reutilizar nuestro método anterior para obtener solo la lista de precios de esa moneda (Wykorzystaj ponownie naszą poprzednią metodę, aby pobrać tylko listę cen tej waluty)
+
+        if (filteredPrices.isEmpty()) {  // Comprobar si la lista está vacía (es decir, si no existen registros para esa moneda) (Sprawdź, czy lista jest pusta - czyli czy nie ma wpisów dla tej waluty)
+            return new CryptoStats(symbol.toUpperCase(), 0, 0.0, 0.0, 0.0);  // Devolver un objeto de estadísticas con todos los valores en cero para evitar errores matemáticos (Zwróć obiekt statystyk ze wszystkimi wartościami równymi zero, aby uniknąć błędów matematycznych)
+        }  // Cerrar el bloque condicional if (Zamknij blok warunkowy if)
+
+        DoubleSummaryStatistics stats = filteredPrices.stream()  // Abrir un flujo (Stream) sobre la lista filtrada de precios (Otwórz strumień Stream na przefiltrowanej liście cen)
+                .mapToDouble(CryptoPrice::getPrice)  // Extraer únicamente el valor numérico decimal (double) de cada objeto CryptoPrice (Wyciągnij wyłącznie wartość liczbową dziesiętną double z każdego obiektu CryptoPrice)
+                .summaryStatistics();  // Ejecutar el cálculo estadístico completo (mínimo, máximo, promedio y total) en una sola operación (Wykonaj pełne obliczenia statystyczne - minimum, maksimum, średnią i sumę - w jednej operacji)
+
+        return new CryptoStats(  // Crear y devolver un nuevo objeto CryptoStats con los resultados obtenidos (Utwórz i zwróć nowy obiekt CryptoStats z uzyskanymi wynikami)
+                symbol.toUpperCase(),  // Pasar el símbolo convertido a letras mayúsculas para que se vea uniforme (Przekaż symbol zamieniony na wielkie litery, aby wyglądał jednolicie)
+                stats.getCount(),      // Obtener la cantidad total de registros analizados (Pobierz całkowitą liczbę przeanalizowanych wpisów)
+                stats.getMin(),        // Obtener el precio más bajo encontrado (Pobierz najniższą znalezioną cenę)
+                stats.getMax(),        // Obtener el precio más alto encontrado (Pobierz najwyższą znalezioną cenę)
+                stats.getAverage()     // Obtener el precio promedio calculado (Pobierz obliczoną średnią cenę)
+        );  // Cerrar la llamada al constructor de CryptoStats (Zamknij wywołanie konstruktora CryptoStats)}
 }  // Cerrar el cuerpo de la clase CryptoService (Zamknij ciało klasy CryptoService)
