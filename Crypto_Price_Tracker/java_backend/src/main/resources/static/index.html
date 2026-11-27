@@ -1,0 +1,108 @@
+<!DOCTYPE html>  <!-- Declarar que este documento utiliza el estándar moderno HTML5 (Zadeklaruj, że ten dokument używa nowoczesnego standardu HTML5) -->
+<html lang="es">  <!-- Abrir la etiqueta raíz HTML indicando que el idioma principal de la página es el español (Otwórz główny znacznik HTML wskazujący, że głównym językiem strony jest hiszpański) -->
+<head>  <!-- Abrir la sección head donde van los metadatos, título y estilos CSS (Otwórz sekcję head, gdzie znajdują się metadane, tytuł i style CSS) -->
+    <meta charset="UTF-8">  <!-- Establecer la codificación UTF-8 para mostrar correctamente tildes, eñes y caracteres especiales (Ustaw kodowanie UTF-8, aby poprawnie wyświetlać znaki diakrytyczne i polskie/hiszpańskie litery) -->
+    <title>Crypto Price Tracker</title>  <!-- Definir el título que aparecerá en la pestaña del navegador (Zdefiniuj tytuł, który pojawi się na karcie przeglądarki) -->
+    <link rel="stylesheet" href="style.css">
+<body>  <!-- Abrir el cuerpo visible de la página web (Otwórz widoczną treść strony internetowej) -->
+    <h1>Crypto Price Tracker</h1>  <!-- Mostrar el encabezado principal en pantalla (Wyświetl główny nagłówek na ekranie) -->
+
+    <div class="controls">  <!-- Contenedor para los controles de selección de criptomoneda (Kontener na elementy sterujące wyborem kryptowaluty) -->
+        <label for="symbolSelect">Moneda:</label>  <!-- Etiqueta descriptiva asociada al menú desplegable (Etykieta opisowa powiązana z listą rozwijaną) -->
+        <select id="symbolSelect">  <!-- Menú desplegable con identificador 'symbolSelect' para elegir el par de monedas (Lista rozwijana o identyfikatorze 'symbolSelect' do wyboru pary walutowej) -->
+            <option value="BTCUSDT">BTCUSDT</option>  <!-- Opción para seleccionar Bitcoin frente a USDT (Opcja wyboru Bitcoina względem USDT) -->
+            <option value="ETHUSDT">ETHUSDT</option>  <!-- Opción para seleccionar Ethereum frente a USDT (Opcja wyboru Ethereum względem USDT) -->
+        </select>  <!-- Cerrar el menú desplegable (Zamknij listę rozwijaną) -->
+        <button id="refreshBtn" type="button">Actualizar</button>
+        <!-- Botón para recargar manualmente los datos desde la API de Java (Przycisk do ręcznego odświeżenia danych z API Javy) -->
+        <button id="autoRefreshBtn" type="button">Auto: ON (10s)</button>  <!-- Botón para activar o pausar la actualización automática cada 10 segundos (Przycisk do włączania lub wstrzymywania automatycznego odświeżania co 10 sekund) -->
+        <span id="lastUpdated" style="font-size: 13px; color: #555;">Última actualización: -</span>  <!-- Texto que mostrará la hora exacta de la última carga de datos (Tekst, który pokaże dokładną godzinę ostatniego pobrania danych) -->
+    </div>  <!-- Cerrar el contenedor de controles (Zamknij kontener elementów sterujących) -->
+
+    <div class="cards">  <!-- Contenedor de las 4 tarjetas de resumen estadístico (Kontener na 4 karty podsumowania statystycznego) -->
+        <div class="card"><div class="label">Registros</div><div class="value" id="countVal">-</div></div>  <!-- Tarjeta que mostrará la cantidad total de registros analizados (Karta, która pokaże łączną liczbę przeanalizowanych wpisów) -->
+        <div class="card"><div class="label">Mínimo</div><div class="value" id="minVal">-</div></div>  <!-- Tarjeta que mostrará el precio mínimo registrado (Karta, która pokaże najniższą zarejestrowaną cenę) -->
+        <div class="card"><div class="label">Máximo</div><div class="value" id="maxVal">-</div></div>  <!-- Tarjeta que mostrará el precio máximo registrado (Karta, która pokaże najwyższą zarejestrowaną cenę) -->
+        <div class="card"><div class="label">Promedio</div><div class="value" id="avgVal">-</div></div>  <!-- Tarjeta que mostrará el precio promedio calculado (Karta, która pokaże obliczoną średnią cenę) -->
+    </div>  <!-- Cerrar el contenedor de tarjetas (Zamknij kontener kart) -->
+
+    <table>  <!-- Abrir la tabla que listará el historial de precios (Otwórz tabelę, która wyświetli historię cen) -->
+        <thead>  <!-- Encabezado de la tabla (Nagłówek tabeli) -->
+            <tr>  <!-- Fila de títulos de columnas (Wiersz nazw kolumn) -->
+                <th>Fecha y hora</th>  <!-- Columna para la marca de tiempo (Kolumna na znacznik czasu) -->
+                <th>Símbolo</th>  <!-- Columna para el símbolo de la criptomoneda (Kolumna na symbol kryptowaluty) -->
+                <th>Precio (USDT)</th>  <!-- Columna para el precio numérico (Kolumna na cenę liczbową) -->
+            </tr>  <!-- Cerrar fila de encabezados (Zamknij wiersz nagłówków) -->
+        </thead>  <!-- Cerrar encabezado de la tabla (Zamknij nagłówek tabeli) -->
+        <tbody id="pricesBody"></tbody>  <!-- Cuerpo vacío de la tabla donde JavaScript insertará las filas dinámicamente (Puste ciało tabeli, do którego JavaScript dynamicznie wstawi wiersze) -->
+    </table>  <!-- Cerrar la tabla (Zamknij tabelę) -->
+
+    <script>  <!-- Abrir el bloque de código JavaScript que se ejecutará en el navegador (Otwórz blok kodu JavaScript, który wykona się w przeglądarce) -->
+        const symbolSelect = document.getElementById("symbolSelect");  <!-- Obtener referencia al elemento <select> del DOM mediante su id (Pobierz referencję do elementu <select> z drzewa DOM po jego id) -->
+        const refreshBtn = document.getElementById("refreshBtn");  <!-- Obtener referencia al botón 'Actualizar' mediante su id (Pobierz referencję do przycisku 'Actualizar' po jego id) -->
+        const pricesBody = document.getElementById("pricesBody");  <!-- Obtener referencia al cuerpo <tbody> de la tabla donde irán las filas (Pobierz referencję do ciała tabeli <tbody>, gdzie trafią wiersze) -->
+
+        function formatMoney(num) {  <!-- Definir una función auxiliar para formatear números decimales con dos decimales (Zdefiniuj funkcję pomocniczą do formatowania liczb dziesiętnych do dwóch miejsc po przecinku) -->
+            return Number(num).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });  <!-- Convertir el valor a número y formatearlo con dos decimales fijos (Zamień wartość na liczbę i sformatuj ją ze stałymi dwoma miejscami po przecinku) -->
+        }  <!-- Cerrar la función formatMoney (Zamknij funkcję formatMoney) -->
+
+        async function loadCryptoData() {  <!-- Definir una función asíncrona para pedir datos a nuestro backend en Java sin recargar la página (Zdefiniuj funkcję asynchroniczną do pobrania danych z naszego backendu w Javie bez przeładowywania strony) -->
+            const symbol = symbolSelect.value;  <!-- Leer el símbolo actualmente seleccionado en el menú desplegable, por ejemplo 'BTCUSDT' (Odczytaj aktualnie wybrany symbol z listy rozwijanej, np. 'BTCUSDT') -->
+
+            const statsResponse = await fetch(`/api/crypto/stats/${symbol}`);  <!-- Hacer una petición HTTP GET al endpoint de estadísticas de Java y esperar la respuesta (Wyślij żądanie HTTP GET do endpointu statystyk w Javie i poczekaj na odpowiedź) -->
+            const stats = await statsResponse.json();  <!-- Convertir el cuerpo JSON de la respuesta de estadísticas en un objeto JavaScript (Zamień treść JSON odpowiedzi ze statystykami na obiekt JavaScript) -->
+
+            document.getElementById("countVal").textContent = stats.count;  <!-- Escribir la cantidad de registros dentro de la tarjeta correspondiente (Wpisz liczbę rekordów do odpowiedniej karty) -->
+            document.getElementById("minVal").textContent = "$" + formatMoney(stats.minPrice);  <!-- Escribir el precio mínimo formateado dentro de su tarjeta (Wpisz sformatowaną cenę minimalną do jej karty) -->
+            document.getElementById("maxVal").textContent = "$" + formatMoney(stats.maxPrice);  <!-- Escribir el precio máximo formateado dentro de su tarjeta (Wpisz sformatowaną cenę maksymalną do jej karty) -->
+            document.getElementById("avgVal").textContent = "$" + formatMoney(stats.averagePrice);  <!-- Escribir el precio promedio formateado dentro de su tarjeta (Wpisz sformatowaną średnią cenę do jej karty) -->
+
+            const pricesResponse = await fetch(`/api/crypto/prices/${symbol}`);  <!-- Hacer una petición HTTP GET al endpoint de historial de precios de Java para esa moneda (Wyślij żądanie HTTP GET do endpointu historii cen w Javie dla tej waluty) -->
+            const prices = await pricesResponse.json();  <!-- Convertir la respuesta JSON en un arreglo de objetos de precios (Zamień odpowiedź JSON na tablicę obiektów z cenami) -->
+
+            pricesBody.innerHTML = "";  <!-- Limpiar las filas anteriores de la tabla antes de dibujar las nuevas (Wyczyść poprzednie wiersze tabeli przed narysowaniem nowych) -->
+
+            prices.forEach(item => {  <!-- Recorrer cada objeto 'item' dentro del arreglo 'prices' (Przejrzyj każdy obiekt 'item' w tablicy 'prices') -->
+                const tr = document.createElement("tr");  <!-- Crear un nuevo elemento de fila HTML <tr> en memoria (Utwórz nowy element wiersza HTML <tr> w pamięci) -->
+                tr.innerHTML = `  <!-- Definir el contenido HTML interno de la fila con las tres celdas (Zdefiniuj wewnętrzną treść HTML wiersza z trzema komórkami) -->
+                    <td>${item.timestamp}</td>  <!-- Celda con la fecha y hora del registro (Komórka z datą i godziną wpisu) -->
+                    <td>${item.symbol}</td>  <!-- Celda con el símbolo de la criptomoneda (Komórka z symbolem kryptowaluty) -->
+                    <td>$${formatMoney(item.price)}</td>  <!-- Celda con el precio formateado con signo de dólar (Komórka z ceną sformatowaną ze znakiem dolara) -->
+                `;  <!-- Cerrar la plantilla de texto del contenido de la fila (Zamknij szablon tekstowy treści wiersza) -->
+                pricesBody.appendChild(tr);  <!-- Agregar la fila recién creada al final del cuerpo de la tabla (Dodaj nowo utworzony wiersz na końcu ciała tabeli) -->
+            });  <!-- Cerrar el bucle forEach (Zamknij pętlę forEach) -->
+        }  <!-- Cerrar la función loadCryptoData (Zamknij funkcję loadCryptoData) -->
+
+        symbolSelect.addEventListener("change", loadCryptoData);  <!-- Ejecutar loadCryptoData automáticamente cada vez que el usuario cambie de moneda en el menú (Uruchamiaj loadCryptoData automatycznie za każdym razem, gdy użytkownik zmieni walutę w menu) -->
+        refreshBtn.addEventListener("click", loadCryptoData);  <!-- Ejecutar loadCryptoData cuando el usuario haga clic en el botón 'Actualizar' (Uruchamiaj loadCryptoData, gdy użytkownik kliknie przycisk 'Actualizar') -->
+        window.addEventListener("DOMContentLoaded", loadCryptoData);  <!-- Cargar los datos automáticamente en cuanto termine de cargarse la estructura inicial de la página (Załaduj dane automatycznie od razu po załadowaniu początkowej struktury strony) -->
+        
+        const autoRefreshBtn = document.getElementById("autoRefreshBtn");  // Obtener referencia al botón de auto-actualización mediante su id (Pobierz referencję do przycisku auto-odświeżania po jego id)
+        const lastUpdated = document.getElementById("lastUpdated");  // Obtener referencia al elemento donde mostraremos la hora de actualización (Pobierz referencję do elementu, w którym wyświetlimy godzinę aktualizacji)
+
+        let autoRefreshEnabled = true;  // Crear una variable booleana para controlar si la auto-actualización está activa al inicio (Utwórz zmienną logiczną określającą, czy auto-odświeżanie jest aktywne na starcie)
+
+        function updateTimestamp() {  // Definir una función auxiliar para actualizar el texto con la hora local actual (Zdefiniuj funkcję pomocniczą do zaktualizowania tekstu o bieżącą godzinę lokalną)
+            const now = new Date().toLocaleTimeString();  // Obtener la hora actual del sistema en formato legible (Pobierz bieżącą godzinę systemową w czytelnym formacie)
+            lastUpdated.textContent = `Última actualización: ${now}`;  // Escribir la hora exacta dentro del elemento en pantalla (Wpisz dokładną godzinę wewnątrz elementu na ekranie)
+        }  // Cerrar la función updateTimestamp (Zamknij funkcję updateTimestamp)
+
+        const originalLoadCryptoData = loadCryptoData;  // Guardar una referencia a nuestra función loadCryptoData existente (Zapisz referencję do naszej istniejącej funkcji loadCryptoData)
+        loadCryptoData = async function () {  // Sobrescribir loadCryptoData para que también actualice la marca de tiempo al terminar (Nadpisz loadCryptoData, aby po zakończeniu aktualizowała również znacznik czasu)
+            await originalLoadCryptoData();  // Ejecutar la carga original de estadísticas y tabla de precios (Wykonaj oryginalne ładowanie statystyk i tabeli cen)
+            updateTimestamp();  // Refrescar la hora de última actualización en pantalla (Odśwież godzinę ostatniej aktualizacji na ekranie)
+        };  // Cerrar la función envolvente loadCryptoData (Zamknij funkcję opakowującą loadCryptoData)
+
+        const intervalId = setInterval(() => {  // Programar un temporizador repetitivo que se ejecuta cada 10,000 milisegundos (10 segundos) (Ustaw cykliczny licznik czasu, który wykonuje się co 10 000 milisekund - czyli 10 sekund)
+            if (autoRefreshEnabled) {  // Comprobar si el modo automático está encendido antes de pedir datos (Sprawdź, czy tryb automatyczny jest włączony przed pobraniem danych)
+                loadCryptoData();  // Llamar a loadCryptoData para traer los precios y estadísticas más recientes (Wywołaj loadCryptoData, aby pobrać najnowsze ceny i statystyki)
+            }  // Cerrar el condicional if (Zamknij warunek if)
+        }, 10000);  // Establecer el intervalo en 10,000 ms = 10 segundos (Ustaw interwał na 10 000 ms = 10 sekund)
+
+        autoRefreshBtn.addEventListener("click", () => {  // Escuchar los clics sobre el botón 'Auto: ON (10s)' (Nasłuchuj kliknięć na przycisku 'Auto: ON (10s)')
+            autoRefreshEnabled = !autoRefreshEnabled;  // Invertir el estado booleano: de true a false o de false a true (Odwróć stan logiczny: z true na false lub z false na true)
+            autoRefreshBtn.textContent = autoRefreshEnabled ? "Auto: ON (10s)" : "Auto: OFF";  // Cambiar el texto del botón según el nuevo estado (Zmień tekst przycisku w zależności od nowego stanu)
+        });  // Cerrar el oyente de evento click (Zamknij nasłuchiwacz zdarzenia click)
+    </script>  <!-- Cerrar el bloque de código JavaScript (Zamknij blok kodu JavaScript) -->
+</body>  <!-- Cerrar el cuerpo de la página web (Zamknij treść strony internetowej) -->
+</html>  <!-- Cerrar el documento HTML (Zamknij dokument HTML) -->

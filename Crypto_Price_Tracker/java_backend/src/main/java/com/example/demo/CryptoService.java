@@ -13,7 +13,7 @@ public class CryptoService {  // Declarar la clase pública CryptoService encarg
 
     public List<CryptoPrice> getAllPricesFromCsv() {  // Definir un método público que devuelve una lista de objetos CryptoPrice (Zdefiniuj publiczną metodę zwracającą listę obiektów CryptoPrice)
         List<CryptoPrice> priceList = new ArrayList<>();  // Crear una lista vacía de tipo ArrayList para ir llenándola con los datos leídos (Utwórz pustą listę typu ArrayList, aby wypełniać ją odczytanymi danymi)
-        String filePath = "C:/Users/użytkownik/Downloads/Program/Python_and_Java/Python_and_Java/Crypto_Price_Tracker/crypto_prices.csv";  // Guardar en una variable de texto la ruta hacia el archivo CSV generado por Python (Zapisz w zmiennej tekstowej ścieżkę do pliku CSV wygenerowanego przez Pythona)
+        String filePath = "../crypto_prices.csv";  // Guardar en una variable de texto la ruta hacia el archivo CSV generado por Python (Zapisz w zmiennej tekstowej ścieżkę do pliku CSV wygenerowanego przez Pythona)
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {  // Abrir el archivo con FileReader dentro de un BufferedReader usando try-with-resources para que se cierre solo al terminar (Otwórz plik za pomocą FileReader wewnątrz BufferedReader używając try-with-resources, aby zamknął się sam po zakończeniu)
             String line;  // Declarar una variable de texto temporal para almacenar cada línea del archivo mientras se lee (Zadeklaruj tymczasową zmienną tekstową do przechowywania każdej linii pliku podczas odczytu)

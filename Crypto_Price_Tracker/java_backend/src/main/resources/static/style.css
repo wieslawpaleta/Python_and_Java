@@ -1,0 +1,71 @@
+/* Abrir el bloque de estilos CSS para darle diseño visual a la página (Otwórz blok stylów CSS, aby nadać stronie wygląd wizualny) */
+        body {  /* Seleccionar la etiqueta body para aplicar estilos generales a toda la página (Wybierz znacznik body, aby zastosować ogólne style do całej strony) */
+            font-family: Arial, sans-serif;  /* Definir una fuente tipográfica limpia y legible (Ustaw czystą i czytelną rodzinę czcionek) */
+            max-width: 850px;  /* Limitar el ancho máximo del contenido a 850 píxeles (Ogranicz maksymalną szerokość treści do 850 pikseli) */
+            margin: 40px auto;  /* Dar 40px de margen arriba/abajo y centrar horizontalmente con auto (Nadaj 40px marginesu góra/dół i wyśrodkuj w poziomie za pomocą auto) */
+            padding: 0 20px;  /* Añadir 20px de espacio interior a la izquierda y derecha (Dodaj 20px odstępu wewnętrznego po lewej i prawej stronie) */
+            background: #f4f6f9;  /* Establecer un color de fondo gris muy suave (Ustaw bardzo jasnoszary kolor tła) */
+            color: #222;  /* Establecer un color de texto gris oscuro casi negro (Ustaw ciemnoszary, prawie czarny kolor tekstu) */
+        }  /* Cerrar las reglas de estilo de body (Zamknij reguły stylu dla body) */
+
+        h1 {  /* Seleccionar el encabezado principal h1 (Wybierz główny nagłówek h1) */
+            margin-bottom: 20px;  /* Añadir 20 píxeles de separación debajo del título (Dodaj 20 pikseli odstępu pod tytułem) */
+        }  /* Cerrar las reglas de estilo de h1 (Zamknij reguły stylu dla h1) */
+
+        .controls {  /* Seleccionar la clase controls para el panel superior de filtros (Wybierz klasę controls dla górnego panelu filtrów) */
+            margin-bottom: 24px;  /* Separar 24 píxeles hacia abajo del resto del contenido (Oddziel o 24 piksele w dół od reszty treści) */
+            display: flex;  /* Activar el modelo flexible flexbox para alinear elementos en fila (Włącz układ flexbox, aby wyrównać elementy w rzędzie) */
+            gap: 10px;  /* Dejar 10 píxeles de espacio entre cada elemento hijo (Zostaw 10 pikseli odstępu między każdym elementem potomnym) */
+            align-items: center;  /* Centrar verticalmente los elementos dentro de la fila (Wyśrodkuj elementy w pionie wewnątrz rzędu) */
+        }  /* Cerrar las reglas de estilo de .controls (Zamknij reguły stylu dla .controls) */
+
+        select, button {  /* Aplicar los mismos estilos tanto a listas desplegables como a botones (Zastosuj te same style zarówno do list rozwijanych, jak i przycisków) */
+            padding: 8px 14px;  /* Añadir 8px arriba/abajo y 14px a los lados dentro del control (Dodaj 8px góra/dół i 14px na boki wewnątrz elementu) */
+            font-size: 15px;  /* Establecer el tamaño de letra en 15 píxeles (Ustaw rozmiar czcionki na 15 pikseli) */
+            cursor: pointer;  /* Cambiar el cursor del ratón a una mano al pasar por encima (Zmień kursor myszy w dłoń po najechaniu) */
+        }  /* Cerrar las reglas de estilo de select y button (Zamknij reguły stylu dla select oraz button) */
+
+        .cards {  /* Seleccionar el contenedor .cards de las tarjetas de estadísticas (Wybierz kontener .cards dla kart statystyk) */
+            display: grid;  /* Usar CSS Grid para organizar las tarjetas en cuadrícula (Użyj CSS Grid do ułożenia kart w siatce) */
+            grid-template-columns: repeat(4, 1fr);  /* Crear 4 columnas de igual ancho (Utwórz 4 kolumny o równej szerokości) */
+            gap: 12px;  /* Añadir 12 píxeles de separación entre filas y columnas (Dodaj 12 pikseli odstępu między wierszami i kolumnami) */
+            margin-bottom: 28px;  /* Dejar 28 píxeles de margen inferior antes de la tabla (Zostaw 28 pikseli dolnego marginesu przed tabelą) */
+        }  /* Cerrar las reglas de estilo de .cards (Zamknij reguły stylu dla .cards) */
+
+        .card {  /* Seleccionar cada tarjeta individual con la clase .card (Wybierz każdą pojedynczą kartę z klasą .card) */
+            background: #fff;  /* Dar fondo blanco puro a la tarjeta (Nadaj karcie czysto białe tło) */
+            padding: 16px;  /* Añadir 16 píxeles de relleno interior en todos los lados (Dodaj 16 pikseli wewnętrznego odstępu z każdej strony) */
+            border-radius: 8px;  /* Redondear las esquinas de la tarjeta con un radio de 8px (Zaokrąglij rogi karty promieniem 8px) */
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);  /* Añadir una sombra suave debajo de la tarjeta (Dodaj delikatny cień pod kartą) */
+        }  /* Cerrar las reglas de estilo de .card (Zamknij reguły stylu dla .card) */
+
+        .label {  /* Seleccionar la etiqueta descriptiva dentro de cada tarjeta (Wybierz etykietę opisową wewnątrz każdej karty) */
+            font-size: 13px;  /* Reducir el tamaño del texto a 13 píxeles (Zmniejsz rozmiar tekstu do 13 pikseli) */
+            color: #666;  /* Usar un color gris medio para la etiqueta (Użyj średnioszarego koloru dla etykiety) */
+            margin-bottom: 6px;  /* Separar 6 píxeles la etiqueta del valor numérico (Oddziel etykietę o 6 pikseli od wartości liczbowej) */
+        }  /* Cerrar las reglas de estilo de .label (Zamknij reguły stylu dla .label) */
+
+        .value {  /* Seleccionar el valor principal dentro de cada tarjeta (Wybierz główną wartość wewnątrz każdej karty) */
+            font-size: 20px;  /* Aumentar el tamaño del número a 20 píxeles (Zwiększ rozmiar liczby do 20 pikseli) */
+            font-weight: bold;  /* Poner el texto en negrita para destacarlo (Ustaw pogrubienie tekstu, aby go wyróżnić) */
+        }  /* Cerrar las reglas de estilo de .value (Zamknij reguły stylu dla .value) */
+
+        table {  /* Seleccionar la tabla del historial de precios (Wybierz tabelę historii cen) */
+            width: 100%;  /* Hacer que la tabla ocupe el 100% del ancho disponible (Spraw, aby tabela zajmowała 100% dostępnej szerokości) */
+            border-collapse: collapse;  /* Unir los bordes adyacentes de las celdas en una sola línea (Złącz sąsiednie obramowania komórek w jedną linię) */
+            background: #fff;  /* Dar fondo blanco a toda la tabla (Nadaj całej tabeli białe tło) */
+            border-radius: 8px;  /* Redondear las esquinas de la tabla (Zaokrąglij rogi tabeli) */
+            overflow: hidden;  /* Recortar lo que sobresalga de los bordes redondeados (Przytnij to, co wystaje poza zaokrąglone rogi) */
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);  /* Añadir una sombra suave a la tabla (Dodaj delikatny cień do tabeli) */
+        }  /* Cerrar las reglas de estilo de table (Zamknij reguły stylu dla table) */
+
+        th, td {  /* Aplicar los mismos estilos a las celdas de encabezado (th) y de datos (td) (Zastosuj te same style do komórek nagłówka th oraz danych td) */
+            padding: 12px;  /* Añadir 12 píxeles de espacio interno en cada celda (Dodaj 12 pikseli wewnętrznego odstępu w każdej komórce) */
+            text-align: left;  /* Alinear el texto de las celdas a la izquierda (Wyrównaj tekst w komórkach do lewej) */
+            border-bottom: 1px solid #eee;  /* Dibujar una línea gris clara debajo de cada fila (Narysuj jasnoszarą linię pod każdym wierszem) */
+        }  /* Cerrar las reglas de estilo de th y td (Zamknij reguły stylu dla th oraz td) */
+
+        th {  /* Seleccionar únicamente las celdas de encabezado th (Wybierz wyłącznie komórki nagłówka th) */
+            background: #eef1f5;  /* Dar un fondo gris azulado claro a la cabecera de la tabla (Nadaj jasnoniebieskoszare tło nagłówkowi tabeli) */
+        }  /* Cerrar las reglas de estilo de th (Zamknij reguły stylu dla th) */
+/* Cerrar el bloque de estilos CSS (Zamknij blok stylów CSS) */
